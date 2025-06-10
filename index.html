@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real Bet Web App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn:hover {
+      background-color: #45a049;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .team-btn {
+      padding: 10px;
+      margin-right: 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    .active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .admin-toggle {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background: #444;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 20px;
+      text-align: center;
+      line-height: 40px;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="balance" class="section">ব্যালেন্স: ৳1000</div>
+
+    <div class="section" id="match-section">
+      <h3>ম্যাচ: Argentina vs Brazil</h3>
+      <button class="team-btn active" onclick="selectTeam('Argentina', 1.8)">Argentina</button>
+      <button class="team-btn" onclick="selectTeam('Brazil', 2.1)">Brazil</button>
+      <p id="multiplier">Profit Multiplier: ×1.8</p>
+      <label>Amount:</label>
+      <input type="number" id="bet-amount" placeholder="Enter bet amount">
+      <button class="btn" onclick="confirmBet()">Bet Confirm</button>
+    </div>
+
+    <div class="section">
+      <h3>Deposit</h3>
+      <label>Payment Method:</label>
+      <select id="deposit-method">
+        <option value="bkash">bKash</option>
+        <option value="nagad">Nagad</option>
+      </select>
+      <p>01816395401 এই নাম্বারে সেন্ড মানি করুন।</p>
+      <label>Amount:</label>
+      <input type="number" placeholder="Enter deposit amount">
+      <label>Transaction ID:</label>
+      <input type="text" placeholder="Enter transaction ID">
+      <button class="btn">Submit Deposit</button>
+    </div>
+
+    <div class="section">
+      <h3>Withdraw</h3>
+      <label>Number:</label>
+      <input type="text" placeholder="Enter number">
+      <label>Payment Method:</label>
+      <select>
+        <option value="bkash">bKash</option>
+        <option value="nagad">Nagad</option>
+      </select>
+      <label>Withdraw Amount:</label>
+      <input type="number" placeholder="Enter withdraw amount">
+      <button class="btn">Withdraw Confirm</button>
+    </div>
+
+    <div id="admin-panel" class="section hidden">
+      <h3>Upload Match</h3>
+      <input type="text" placeholder="ম্যাচ টাইটেল">
+      <input type="text" placeholder="Team 1">
+      <input type="text" placeholder="Team 2">
+      <input type="number" placeholder="Team 1 Multiplier">
+      <input type="number" placeholder="Team 2 Multiplier">
+      <button class="btn">Upload Match</button>
+
+      <h3>Declare Winner:</h3>
+      <p>BPL:</p>
+      <button class="btn">Khulan WIN</button>
+      <button class="btn">Dhaka WIN</button>
+    </div>
+  </div>
+
+  <div class="admin-toggle" onclick="promptAdmin()">R</div>
+
+  <script>
+    let balance = 1000;
+    let selectedTeam = 'Argentina';
+    let currentMultiplier = 1.8;
+
+    function updateBalanceDisplay() {
+      document.getElementById("balance").innerText = "ব্যালেন্স: ৳" + balance;
+    }
+
+    function selectTeam(team, multiplier) {
+      selectedTeam = team;
+      currentMultiplier = multiplier;
+      document.getElementById("multiplier").innerText = "Profit Multiplier: ×" + multiplier;
+
+      const buttons = document.querySelectorAll(".team-btn");
+      buttons.forEach(btn => btn.classList.remove("active"));
+      event.target.classList.add("active");
+    }
+
+    function confirmBet() {
+      const amountInput = document.getElementById("bet-amount");
+      const betAmount = parseInt(amountInput.value);
+
+      if (isNaN(betAmount) || betAmount <= 0) {
+        alert("সঠিক এমাউন্ট লিখুন");
+        return;
+      }
+
+      if (betAmount > balance) {
+        alert("আপনার ব্যালেন্সে পর্যাপ্ত টাকা নেই");
+        return;
+      }
+
+      balance -= betAmount;
+      updateBalanceDisplay();
+      alert(selectedTeam + " এর পক্ষে " + betAmount + " টাকা বেট কনফার্ম হয়েছে!");
+      amountInput.value = "";
+    }
+
+    function promptAdmin() {
+      const pass = prompt("Enter admin password:");
+      if (pass === "rezoan") {
+        document.getElementById("admin-panel").classList.remove("hidden");
+      } else {
+        alert("Wrong password!");
+      }
+    }
+
+    window.onload = updateBalanceDisplay;
+  </script>
+</body>
+</html>
